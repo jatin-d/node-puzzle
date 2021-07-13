@@ -1,8 +1,8 @@
 const fs = require("fs");
 const FIXTURES_BASE_DIR = `${__dirname}/../test/fixtures`;
 function generateFixtureJestSnippets(files) {
-    
-    const open = `
+
+  const open = `
 # WARNING: this file is generated automatically
 assert = require 'assert'
 WordCount = require '../lib'
@@ -27,25 +27,25 @@ helper = (input, expected, done) ->
   counter.write input
   counter.end()
 
-describe '10-word-count', ->`;
+describe '10-word-count fixtures generated', ->`;
 
-    const testCase = `
+  const testCase = `
     
     `
-    const specs = files
-        .map((fname) => {
-            const specName = fname.split(".txt")[0].split(",");
-            return `
+  const specs = files
+    .map((fname) => {
+      const specName = fname.split(".txt")[0].split(",");
+      return `
   it '${fname} should have ${specName[0]} lines, ${specName[1]} words, ${specName[2]} chars', (done) ->
       input = fs.readFileSync '${FIXTURES_BASE_DIR}/${fname}', {encoding:'utf8'}
       expected = lines: ${specName[0]}, words: ${specName[1]}, chars: ${specName[2]}, bytes:${specName[2]}
       helper input, expected, done`;
     }).join("\n");
-    return `${open}${specs}`;
+  return `${open}${specs}`;
 }
 function parseFileTree(err, files) {
-    // ...
-    const tmp = generateFixtureJestSnippets(files.filter((f) => f !== "tests"));
-    fs.writeFileSync(`${FIXTURES_BASE_DIR}/../fixtures_generated.coffee`, tmp);
+  // ...
+  const tmp = generateFixtureJestSnippets(files.filter((f) => f !== "tests"));
+  fs.writeFileSync(`${FIXTURES_BASE_DIR}/../fixtures_generated.coffee`, tmp);
 }
 fs.readdir(FIXTURES_BASE_DIR, parseFileTree);
